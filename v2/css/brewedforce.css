@@ -1,0 +1,41 @@
+/*brewedforce.css
+*/
+.task-hidden { display: none !important;}
+.timestep-table {
+	overflow: hidden;
+}
+.timestep-description {
+	
+  word-wrap: break-word;      /* IE 5.5-7 */
+  white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+  white-space: pre-wrap;      /* current browsers */
+
+
+}
+
+tr.timestep td.timestep-done {
+    padding: 10px 0 0 0;
+}
+
+
+.addBrewLogItemModal {z-index:9999;}
+
+.brewlog-item .brewlog-item-description {
+
+    word-break: break-word;
+  white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+  white-space: pre-wrap;      /* current browsers */
+
+
+}
+
+.recipe-datasheet-panel {
+	padding:20px !important;
+}
+
+.timer-hidden {display: none !important;}
+
+#runner {
+    font-size: 24pt;
+}
+

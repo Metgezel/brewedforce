@@ -1,0 +1,452 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en"  ng-app ng-controller="brappAppCtrl">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{recipe.name}} &middot; Brewed Force</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/material.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/brewedforce.css">
+    
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <header class="demo-header mdl-layout__header mdl-color--white mdl-color--grey-100 mdl-color-text--grey-600">
+        <div class="mdl-layout__header-row">
+          <span class="mdl-layout-title">
+          Recept
+          </span>
+          <span class="mdl-badge" data-badge="{{ remainingSteps }}"></span>
+          &nbsp; &nbsp; &nbsp;
+                       <div id="runner"></div>
+          <div class="mdl-layout-spacer"></div>
+
+
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+            <label class="mdl-button mdl-js-button mdl-button--icon" for="addBrewLogItemInput">
+              <i class="material-icons">add</i>
+            </label>
+            <div class="mdl-textfield__expandable-holder">
+              <!-- Brewlog -->
+              <!-- <input class="mdl-textfield__input" type="text" id="search" />
+              <label class="mdl-textfield__label" for="search">Enter your query...</label> -->
+              <form action="#">
+                <!-- <div class="mdl-textfield mdl-js-textfield textfield-demo"> -->
+                  <input class="mdl-textfield__input" id="addBrewLogItemInput" class="addLogItemInput" type="text" ng-model="newLogItem" ng-keypress="checkAddBrewLogEnter($event)" value="" />
+                  <label class="mdl-textfield__label" for="addBrewLogItemInput">
+                    Nieuw brewlog item
+                    <small>bij stap {{ logItemStep }}</small>
+                  </label>
+                <!-- </div> -->
+
+              </form>
+
+              </div>
+          </div>
+          <!-- <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+            <i class="material-icons">more_vert</i>
+          </button>
+          <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+            <li class="mdl-menu__item">About</li>
+            <li class="mdl-menu__item">Contact</li>
+            <li class="mdl-menu__item">Legal information</li>
+          </ul> -->
+        </div>
+      </header>
+      <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+        <header class="demo-drawer-header">
+          <h4>Brewed Force</h4>
+          <!-- <img src="images/user.jpg" class="demo-avatar"> -->
+          <div class="demo-avatar-dropdown">
+            <span>{{recipe.name}}</span>
+            <div class="mdl-layout-spacer"></div>
+            <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+              <i class="material-icons">arrow_drop_down</i>
+            </button>
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
+              <button class="mdl-menu__item">Verander recept</button>
+              <!-- <button class="mdl-menu__item">info@domain.net</button>
+              <button class="mdl-menu__item">Add another account...</button> -->
+            </ul>
+          </div>
+        </header>
+        <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">home</i>Recepten</a>
+
+
+        <a class="mdl-navigation__link" href="#" data-toggle="modal" data-target="#recomputeRecipeModal" title="Nieuwe brouw">
+          <i class="mdl-color-text--blue-grey-400 material-icons">add</i>Nieuw
+        </a>
+
+        <a class="mdl-navigation__link" href="" data-toggle="modal" data-target="#exportRecipeModal" title="Export brouw">
+          <!-- <i class="fa fa-download"></i> -->
+          <i class="mdl-color-text--blue-grey-400 material-icons">get_app</i>Exporteren
+        </a>
+        
+        <a class="mdl-navigation__link" href="#datasheet" title="Export brouw">
+          <!-- <i class="fa fa-download"></i> -->
+          <i class="mdl-color-text--blue-grey-400 material-icons">info</i>Brew Data sheet
+        </a>
+          <!-- <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">inbox</i>Inbox</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">delete</i>Trash</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">report</i>Spam</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">forum</i>Forums</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">flag</i>Updates</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">local_offer</i>Promos</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">shopping_cart</i>Purchases</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">people</i>Social</a>
+          <div class="mdl-layout-spacer"></div>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons">help_outline</i></a> -->
+        </nav>
+      </div>
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid timeline-content">
+
+<!-- Event card -->
+<style>
+  .demo-card-event.mdl-card {
+    width: 256px;
+    height: 256px;
+    background: #3E4EB8;
+  }
+  .demo-card-event > .mdl-card__actions {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .demo-card-event > .mdl-card__title,
+  .demo-card-event > .mdl-card__actions > .mdl-button {
+    color: #fff;
+  }
+</style>
+
+          <div class="mdl-cell mdl-cell--7-col mdl-cell--12-col-phone mdl-cell--12-col-tablet mdl-grid">
+
+
+
+            <table class="timesteps-table mdl-data-table">
+              <thead>
+                <tr>
+                  <th class="mdl-data-table__cell--non-numeric">Done?</th>
+                  <th class="mdl-data-table__cell--non-numeric" style="max-width:300px;">Step</th>
+                  <th>Duration</th>
+                  <!-- <th class="mdl-data-table__cell--non-numeric">Actions</th> -->
+                </tr>
+              </thead>
+              <tbody>
+
+            <tr class="timestep {{ timestep.cssClasses }}" data-timestep-id="{{ timestep.id }}" ng-repeat="timestep in timelineParsed">
+          <!-- <p>Klaar? {{ timestep.done }}</p> -->
+          <td class="timestep-done">
+            <a href="#" ng-click="stepCompleted({{ timestep.id}})" class="pull-right btn" title="">
+            <i class="mdl-color-text--white-black-400 material-icons">done</i>
+            </a>
+
+          </td>
+          <td class="mdl-data-table__cell--non-numeric"><p  class="timestep-description">{{ timestep.description }}</p></td>
+          <td>
+          {{ timestep.duration }}<br/>
+            
+            <a href="#" title="Brewlog" ng-click="focusBrewlogItem({{ timestep.id }})">
+            <!-- data-toggle="modal" data-target="#addBrewLogItem{{ timestep.id }}" -->
+              <i class="mdl-color-text--white-black-400 material-icons">speaker_notes</i>
+            </a>
+            
+            <a href="#" ng-click="startTimestepTimer({{ timestep.id }})" id="startTimestepTimer{{ timestep.id }}" title="Start the stopwatch">
+              <i class="material-icons">play_arrow</i>
+            </a>
+            <a href="#" ng-click="stopTimestepTimer({{ timestep.id }})" id="stopTimestepTimer{{ timestep.id }}" class="timer-hidden" title="Stop and reset the stopwatch">
+              <i class="material-icons">stop</i>
+            </a>
+            
+          </td>
+        </tr>
+
+  </tbody>
+</table>
+<br/>
+<button class="mdl-button mdl-js-button mdl-button--accent" ng-click="resetSteps()">
+  <!-- <i class="mdl-color-text--white-black-400 material-icons">history</i> -->
+  Reset steps
+</button>
+
+          </div>
+            <div class="mdl-cell mdl-cell--5-col mdl-cell--12-col-phone">
+              
+
+
+              <h5>Brewlog</h5>
+<!--               <form action="#">
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label textfield-demo">
+                  <input class="mdl-textfield__input" id="addBrewLogItemInput" class="addLogItemInput" type="text" ng-model="newLogItem" ng-keypress="checkAddBrewLogEnter($event)" value="" />
+                  <label class="mdl-textfield__label" for="sample3">Nieuw brewlog item
+                  <small>bij stap {{ logItemStep }}</small>
+                  </label>
+                </div>
+
+              </form>
+     
+<button class="mdl-button mdl-js-button mdl-button--primary addLogItemButton" ng-click="addLogItem(newLogItem)">
+  <i class="mdl-color-text--white-black-400 material-icons">add</i>
+</button>
+ -->
+
+
+
+ 
+<!-- <hr> -->
+<table class="mdl-data-table mdl-js-data-table mdl-shadow--1dp">
+              <thead>
+                <tr>
+                  <th class="mdl-data-table__cell--non-numeric">Timestamp</th>
+                  <th class="mdl-data-table__cell--non-numeric">Item</th>
+                  <th class="mdl-data-table__cell--non-numeric">Step</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+<tr ng-repeat="logItem in brewLog"  class="brewlog-item">
+            <td>{{ logItem.timestamp | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            <td class="brewlog-item-description">{{ logItem.text }}</td>
+            <td>
+<!-- Multiline Tooltip -->
+<div id="tt{{ logItem.timestepId }">Stap {{ logItem.timestepId }}</div>
+<div class="mdl-tooltip" for="tt{{ logItem.timestepId }">
+{{ timelineParsed[logItem.timestepId].description }}
+</div>
+            
+            </td>
+          </tr>
+        </tbody>
+        </table>
+        <br>
+        <button class="mdl-button mdl-js-button mdl-button--accent" ng-click="exportLog()">
+  <!-- <i class="mdl-color-text--white-black-400 material-icons">history</i> -->
+  Exporteer log
+</button>
+&middot; 
+<button class="mdl-button mdl-js-button mdl-button--accent" ng-click="removeLogItems()">
+  <!-- <i class="mdl-color-text--white-black-400 material-icons">delete</i> -->
+  Reset hele log
+</button>
+            </div>
+
+<div class="mdl-cell mdl-cell--12-col">
+<a id="datasheet"></a>
+<h2>Recept data sheet</h2>
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--6-col mdl-color--white mdl-shadow--3dp recipe-datasheet-panel">
+<h4>Receptgegevens</h4>
+<button class="mdl-button mdl-js-button mdl-button--accent" ng-click="export()" style="float:right;">
+  Exporteer recept
+</button>
+<p>
+  <strong>Huidig recept</strong>: {{recipe.name}}
+</p>
+<p>
+  <strong>Beschrijving</strong>: {{recipe.description}}</p>
+<p>
+  <strong>Auteur</strong>: {{recipe.author}}</p>
+<hr>
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td>
+        boilSize
+      </td>
+      <td>
+        {{recipe.boilSize}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        batchSize
+      </td>
+      <td>
+        {{recipe.batchSize}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        servingSize
+      </td>
+      <td>
+        {{recipe.servingSize}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        steepEfficiency
+      </td>
+      <td>
+        {{recipe.steepEfficiency}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        steepTime
+      </td>
+      <td>
+        {{recipe.steepTime}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        mashEfficiency
+      </td>
+      <td>
+        {{recipe.mashEfficiency}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        style
+      </td>
+      <td>
+        {{recipe.style}}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        ibuMethod
+      </td>
+      <td>
+        {{recipe.ibuMethod}}
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<h4>Ingredi&euml;nten</h4>
+<h5>Mout / vergistingen</h5>
+<ul>
+  <li ng-repeat="fermentables in recipe.fermentables">
+    {{ fermentables.name }}
+    <small>{{ fermentables.weight }}</small>
+  </li>
+</ul>
+
+<h5>Hops</h5>
+<ul>
+  <li ng-repeat="spices in recipe.spices">
+    {{ spices.name }}
+    <small>{{ spices.weight }}</small>
+  </li>
+</ul>
+
+<h5>Gist</h5>
+<ul>
+  <li ng-repeat="yeast in recipe.yeast">
+    {{ yeast.name }}
+    <small>{{ yeast.weight }}</small>
+  </li>
+</ul>
+<!-- {{ recipe.mash }} -->
+    
+  </div>
+  <div class="mdl-cell mdl-cell--6-col mdl-color--white mdl-shadow--3dp recipe-datasheet-panel">
+        <h4>Maisschema</h4>
+
+    <p>
+      <strong>grainTemp</strong> {{ recipe.mash.grainTemp }}</p>
+    <p>
+      <strong>spargeTemp</strong> {{ recipe.mash.spargeTemp }}</p>
+    <p>
+      <strong>ph</strong> {{ recipe.mash.ph }}</p>
+    <p>
+      <strong>notes</strong> {{ recipe.mash.notes }}</p>
+    <p>
+      <strong>maisschema</strong>
+    </p>
+    <ol>
+      <li ng-repeat="step in recipe.mash.steps">
+        <p>
+          <strong>{{step.name}}</strong>
+        </p>
+
+        <p>{{step.type}} van {{ step.temp }} Celsius tot {{ step.endTemp }} Celsius in {{ step.time }} minuten</p>
+        <p>Waterratio: {{ step.waterRatio }}</p>
+      </li>
+    </ol>
+
+<h4>Berekende waarden</h4>
+<div id="log"></div>
+   
+  
+  </div>
+</div>
+  
+
+</div>
+</div>
+
+        </div> <!-- grid -->
+      </main>
+    </div>
+      
+
+    <script src="js/material.min.js"></script>
+
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="js/jquery.runner.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js">
+    </script>
+    <script type="text/javascript" src="js/brauhaus.min.js"></script>
+    <script type="text/javascript" src="js/brauhaus-beerxml.min.js"></script>
+    <script type="text/javascript" src="js/brappApp.js"></script>
+  </body>
+</html>
